@@ -1,0 +1,27 @@
+parameters:
+  locale: 'de-CH'
+
+  # config for "app:import:eclass:tree"
+  app.eclass_to_import_dir: '%kernel.project_dir%/var/persistence/e-class/to-import'
+services:
+  App\Controller\EClassController:
+    arguments:
+      $translationListener: '@stof_doctrine_extensions.listener.translatable'
+
+  gedmo.listener.translatable:
+    class: Gedmo\Translatable\TranslatableListener
+    tags:
+      - { name: doctrine.event_subscriber, connection: default }
+    calls:
+      - [ setAnnotationReader, [ '@annotation_reader' ] ]
+    public: true
+
+  App\Command\import\ImportEClassCommand:
+    arguments:
+      $defaultLocale: '%locale%'
+      $eClassImportDir: '%app.eclass_to_import_dir%'
+
+  App\Service\Import\EClassImportService:
+    arguments:
+      $logger: '@logger'
+      $defaultLocale: '%locale%'

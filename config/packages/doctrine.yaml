@@ -1,0 +1,5 @@
+doctrine:
+    orm:
+        dql:
+            numeric_functions:
+                round: DoctrineExtensions\Query\Mysql\Round
